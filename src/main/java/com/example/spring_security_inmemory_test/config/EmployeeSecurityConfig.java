@@ -21,13 +21,21 @@ public class EmployeeSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests(authorize -> authorize
-                                .requestMatchers(HttpMethod.GET, EMPLOYEE_API).hasAnyRole("EMPLOYEE", "MANAGER", "LEADER")
-                                .requestMatchers(HttpMethod.POST, EMPLOYEE_API).hasAnyRole("MANAGER", "LEADER")
+                        .requestMatchers(HttpMethod.GET, EMPLOYEE_API.substring(0, EMPLOYEE_API.length()-3))
+                            .hasAnyRole("MANAGER", "LEADER")
+                        .requestMatchers(HttpMethod.GET, EMPLOYEE_API)
+                            .hasAnyRole("EMPLOYEE", "MANAGER", "LEADER")
+                        .requestMatchers(HttpMethod.POST, EMPLOYEE_API)
+                            .hasAnyRole("MANAGER", "LEADER")
+                        .requestMatchers(HttpMethod.PATCH, EMPLOYEE_API)
+                            .hasAnyRole("MANAGER", "LEADER")
+                        .requestMatchers(HttpMethod.DELETE, EMPLOYEE_API)
+                            .hasAnyRole("LEADER")
                         .anyRequest().authenticated()
-                )
-                .csrf(csrfConfigurer -> csrfConfigurer.ignoringRequestMatchers("/employees/**"))
-                .httpBasic(Customizer.withDefaults())
-                .build();
+                    )
+                    .csrf(csrfConfigurer -> csrfConfigurer.ignoringRequestMatchers("/employees/**"))
+                    .httpBasic(Customizer.withDefaults())
+                    .build();
     }
 
     @Bean

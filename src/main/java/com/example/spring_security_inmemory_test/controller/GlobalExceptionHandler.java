@@ -18,7 +18,7 @@ public class GlobalExceptionHandler {
         entity.setStatus(HttpStatus.NOT_FOUND.value());
         entity.setMessage(exception.getMessage());
         entity.setTimestamp(System.currentTimeMillis());
-        return ResponseEntity.of(Optional.of(entity));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(entity);
     }
 
     @ExceptionHandler
@@ -27,6 +27,6 @@ public class GlobalExceptionHandler {
         entity.setStatus(HttpStatus.BAD_REQUEST.value());
         entity.setMessage(exception.getMessage());
         entity.setTimestamp(System.currentTimeMillis());
-        return ResponseEntity.of(Optional.of(entity));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(entity);
     }
 }

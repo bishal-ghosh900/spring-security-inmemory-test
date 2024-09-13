@@ -1,5 +1,6 @@
 package com.example.spring_security_inmemory_test.config;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -11,12 +12,18 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 
 @Configuration
 @EnableWebSecurity
 public class EmployeeSecurityConfig {
 
     private final String EMPLOYEE_API="/employees/**";
+    private final AccessDeniedHandler accessDeniedHandler;
+
+    public EmployeeSecurityConfig(CustomAccessDeniedHandler accessDeniedHandler) {
+        this.accessDeniedHandler = accessDeniedHandler;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -35,6 +42,7 @@ public class EmployeeSecurityConfig {
                     )
                     .csrf(csrfConfigurer -> csrfConfigurer.ignoringRequestMatchers("/employees/**"))
                     .httpBasic(Customizer.withDefaults())
+                    .exceptionHandling(configurer -> configurer.accessDeniedHandler(accessDeniedHandler))
                     .build();
     }
 

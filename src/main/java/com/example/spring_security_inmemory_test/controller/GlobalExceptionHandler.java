@@ -1,19 +1,21 @@
 package com.example.spring_security_inmemory_test.controller;
 
+
 import com.example.spring_security_inmemory_test.entity.EmployeeExceptionEntity;
 import com.example.spring_security_inmemory_test.exception.EmployeeException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
+
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.util.Optional;
 
-@ControllerAdvice
-public class GlobalExceptionHandler {
+@RestControllerAdvice
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler
-    public ResponseEntity<EmployeeExceptionEntity> employeeExceptionHandler(EmployeeException exception) {
+    @ExceptionHandler(value = {EmployeeException.class})
+    public ResponseEntity<EmployeeExceptionEntity> handleEmployeeExceptions(Exception exception) {
         EmployeeExceptionEntity entity = new EmployeeExceptionEntity();
         entity.setStatus(HttpStatus.NOT_FOUND.value());
         entity.setMessage(exception.getMessage());
@@ -21,8 +23,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(entity);
     }
 
+
     @ExceptionHandler
-    public ResponseEntity<EmployeeExceptionEntity> globalExceptionHandler(Exception exception) {
+    public ResponseEntity<EmployeeExceptionEntity> handleGlobalExceptions(Exception exception) {
         EmployeeExceptionEntity entity = new EmployeeExceptionEntity();
         entity.setStatus(HttpStatus.BAD_REQUEST.value());
         entity.setMessage(exception.getMessage());
